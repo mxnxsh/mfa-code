@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Setup MFA</title>
+</head>
+<body>
+  <h2>Setup MFA</h2>
+  <input id="username" placeholder="Username" />
+  <button onclick="setup()">Generate QR</button>
+  <div id="qr"></div>
+  <input id="token" placeholder="Enter code from app" />
+  <button onclick="verify()">Verify</button>
+  <p id="msg"></p>
+  <script>
+    const API_URL = 'http://localhost:3000';
+    async function setup() {
+      const username = document.getElementById('username').value;
+      const res = await fetch(API_URL + '/api/setup-mfa', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username })
+      });
+      const data = await res.json();
+      document.getElementById('qr').innerHTML = `<img src="${data.qr}" />`;
+      sessionStorage.setItem('username', username);
+    }
+
+    async function verify() {
+      const token = document.getElementById('token').value;
+      const username = sessionStorage.getItem('username');
+      const res = await fetch(API_URL + '/api/verify-mfa-setup', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, token })
+      });
+      const data = await res.json();
+      document.getElementById('msg').innerText = data.message;
+    }
+  </script>
+</body>
+</html>

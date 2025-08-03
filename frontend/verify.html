@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verify MFA</title>
+</head>
+<body>
+  <h2>Enter MFA code</h2>
+  <input id="token" placeholder="123456" />
+  <button onclick="verify()">Verify</button>
+  <p id="msg"></p>
+  <script>
+    const API_URL = 'http://localhost:3000';
+    async function verify() {
+      const token = document.getElementById('token').value;
+      const username = sessionStorage.getItem('username');
+      const res = await fetch(API_URL + '/api/verify-login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username, token })
+      });
+      const data = await res.json();
+      if (data.token) {
+        sessionStorage.setItem('jwt', data.token);
+        window.location = 'protected.html';
+      } else {
+        document.getElementById('msg').innerText = data.message;
+      }
+    }
+  </script>
+</body>
+</html>

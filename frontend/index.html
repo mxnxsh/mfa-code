@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MFA Login</title>
+</head>
+<body>
+  <h2>Login</h2>
+  <input id="username" placeholder="Username" />
+  <button onclick="login()">Login</button>
+  <p id="msg"></p>
+  <script>
+    async function login() {
+      const API_URL = 'http://localhost:3000'; // Ensure this matches your backend URL
+      const username = document.getElementById('username').value;
+      const res = await fetch(API_URL + '/api/login', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ username })
+      });
+      const data = await res.json();
+      document.getElementById('msg').innerText = data.message;
+      sessionStorage.setItem('username', username);
+      window.location = 'verify.html';
+    }
+  </script>
+</body>
+</html>
